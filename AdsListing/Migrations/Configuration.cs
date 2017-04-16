@@ -10,6 +10,7 @@ namespace AdsListing.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(AdsListing.Models.AdsListingDbContext context)
