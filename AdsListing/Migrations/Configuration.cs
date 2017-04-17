@@ -14,7 +14,7 @@ namespace AdsListing.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = false;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(AdsListingDbContext context)
@@ -28,7 +28,7 @@ namespace AdsListing.Migrations
             if (!context.Users.Any())
             {
                 this.CreateUser(context, "admin@admin.com", "Admin", "123456");
-                this.SetRoleToUser(context, "adin@admin.com", "Admin");
+                this.SetRoleToUser(context, "admin@admin.com", "Admin");
             }     
         }
 
@@ -36,7 +36,7 @@ namespace AdsListing.Migrations
         {
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
-            var user = context.Users.First(u => u.Email == email);
+            var user = context.Users.Where(u => u.Email == email).First();
             var result = userManager.AddToRole(user.Id, role);
 
             if (!result.Succeeded)

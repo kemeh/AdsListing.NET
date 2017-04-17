@@ -53,12 +53,14 @@ namespace AdsListing.Controllers
         }
 
         //GET: Article/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult Create(Ad ad)
         {
             if (ModelState.IsValid)
@@ -92,10 +94,6 @@ namespace AdsListing.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            else
-            {
-                id = (int)id.Value;
-            }
 
             using (var database = new AdsListingDbContext())
             {
@@ -105,6 +103,11 @@ namespace AdsListing.Controllers
                     .Where(a => a.Id == id)
                     .Include(a => a.Author)
                     .First();
+
+                if (!IsUserAuthorizedToEdit(ad))
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
 
                 //Check if the Ad exists
                 if (ad == null)
@@ -165,6 +168,11 @@ namespace AdsListing.Controllers
                     .Where(a => a.Id == id)
                     .First();
 
+                if (!IsUserAuthorizedToEdit(ad))
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
+
                 if (ad == null)
                 {
                     return HttpNotFound();
@@ -205,6 +213,14 @@ namespace AdsListing.Controllers
             }
 
             return View(model);
+        }
+
+        private bool IsUserAuthorizedToEdit(Ad ad)
+        {
+            bool isAdmin = this.User.IsInRole("Admin");
+            bool isAuthor = ad.IsAuthor(this.User.Identity.Name);
+
+            return isAdmin || isAuthor;
         }
     }
 }
