@@ -1,3 +1,7 @@
+using AdsListing.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+
 namespace AdsListing.Migrations
 {
     using System;
@@ -10,23 +14,81 @@ namespace AdsListing.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
+            AutomaticMigrationDataLossAllowed = false;
         }
 
-        protected override void Seed(AdsListing.Models.AdsListingDbContext context)
+        protected override void Seed(AdsListingDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            if (!context.Roles.Any())
+            {
+                this.CreateRole(context, "Admin");
+                this.CreateRole(context, "User");
+            }
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            if (!context.Users.Any())
+            {
+                this.CreateUser(context, "admin@admin.com", "Admin", "123456");
+                this.SetRoleToUser(context, "adin@admin.com", "Admin");
+            }     
         }
-    }
+
+        private void SetRoleToUser(AdsListingDbContext context, string email, string role)
+        {
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+
+            var user = context.Users.First(u => u.Email == email);
+            var result = userManager.AddToRole(user.Id, role);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(";", result.Errors));
+            }
+        }
+
+        private void CreateUser(AdsListingDbContext context, string email, string fullName, string password)
+        {
+            // Create User Manager
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+
+            // Ser User manager password validator
+            userManager.PasswordValidator = new PasswordValidator
+            {
+                RequiredLength = 6,
+                RequireDigit = false,
+                RequireLowercase = false,
+                RequireNonLetterOrDigit = false,
+                RequireUppercase = false,
+            };
+
+            //Create user object
+            var admin = new ApplicationUser
+            {
+                UserName = email,
+                FullName = fullName,
+                Email = email
+            };
+
+            //Create user
+            var result = userManager.Create(admin, password);
+
+            //Validate result
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(";", result.Errors));
+            }
+
+        }
+
+        private void CreateRole(AdsListingDbContext context, string roleName)
+        {
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+
+            var result = roleManager.Create(new IdentityRole(roleName));
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(";", result.Errors));
+            }
+        }
+    }   
 }
