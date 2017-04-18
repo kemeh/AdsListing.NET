@@ -1,0 +1,31 @@
+﻿@model List<AdsListing.Models.Ad>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="container">
+    <div class="row">
+        @foreach (var ad in Model)
+        {
+            <div class="media">
+                <article>
+                    <header>
+                        <h2>
+                            @Html.ActionLink(@ad.Title, "Details", "Ad", new { @id = ad.Id }, null)
+                        </h2>
+                    </header>
+                    <p>
+                        @ad.Description
+                    </p>
+                    <footer class="pull-right">
+                        <small class="author">
+                            --author @ad.Author.FullName
+                        </small>
+                    </footer>
+                </article>
+            </div>
+        }
+    </div>
+</div>
+<hr />

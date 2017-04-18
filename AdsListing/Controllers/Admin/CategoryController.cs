@@ -9,6 +9,7 @@ using AdsListing.Models;
 
 namespace AdsListing.Controllers.Admin
 {
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         // GET: Category

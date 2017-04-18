@@ -52,16 +52,26 @@ namespace AdsListing.Controllers
             }
         }
 
-        //GET: Article/Create
+        //GET: Ad/Create
         [Authorize]
         public ActionResult Create()
         {
-            return View();
+            using (var database = new AdsListingDbContext())
+            {
+                var model = new AdViewModel();
+                model.Categories = database
+                    .Categories
+                    .OrderBy(c => c.Name)
+                    .ToList();
+
+                return View(model);
+            }            
         }
 
+        //POST: Ad/Create
         [HttpPost]
         [Authorize]
-        public ActionResult Create(Ad ad)
+        public ActionResult Create(AdViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -73,6 +83,8 @@ namespace AdsListing.Controllers
                         .Where(u => u.UserName == this.User.Identity.Name)
                         .First()
                         .Id;
+
+                    var ad = new Ad(authorId, model.Title, model.Description, model.CategoryId);
                     //Set Ads Author
                     ad.AuthorId = authorId;
 
@@ -84,7 +96,7 @@ namespace AdsListing.Controllers
                 }
             }
 
-            return View(ad);
+            return View(model);
         }
 
         // Get: Ad/Delete
@@ -182,6 +194,11 @@ namespace AdsListing.Controllers
                 model.Id = ad.Id;
                 model.Title = ad.Title;
                 model.Description = ad.Description;
+                model.CategoryId = ad.CategoryId;
+                model.Categories = database
+                    .Categories
+                    .OrderBy(c => c.Name)
+                    .ToList();
 
                 return View(model);
             }
@@ -203,6 +220,7 @@ namespace AdsListing.Controllers
                     //Set article properties
                     ad.Title = model.Title;
                     ad.Description = model.Description;
+                    ad.CategoryId = model.CategoryId;
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
