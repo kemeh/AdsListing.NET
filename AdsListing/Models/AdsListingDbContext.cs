@@ -18,6 +18,8 @@ namespace AdsListing.Models
 
         public virtual IDbSet<Category> Categories { get; set; }
 
+        public virtual IDbSet<Location> Locations { get; set; }
+
         public static AdsListingDbContext Create()
         {
             return new AdsListingDbContext();

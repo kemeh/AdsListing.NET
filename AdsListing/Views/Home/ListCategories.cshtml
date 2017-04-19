@@ -4,20 +4,16 @@
     ViewBag.Title = "List";
 }
 
-<div class="container">
-    <div class="row">
+<div class="col-sm-2">
+    <ul class="list-group">
         @foreach (var category in Model)
         {
-            <div class="col-sm-6 text-center text-uppercase">
-                <p>
-                    <h2>
-                        @Html.ActionLink(string.Format($"{category.Name} ({category.Ads.Count})"),
+            <li class="list-group-item">
+                @Html.ActionLink(string.Format($"{category.Name} ({category.Ads.Count})"),
                         "ListAds", "Home", new { @categoryId = category.Id }, null)
-                </h2>
-            </p>
-        </div>
+            </li>
         }
-    </div>
+    </ul>
 </div>
 <hr />
 
