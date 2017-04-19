@@ -22,5 +22,11 @@ namespace AdsListing.Models
         public int CategoryId { get; set; }
 
         public ICollection<Category> Categories { get; set; }
+
+        public int LocationId { get; set; }
+
+        public ICollection<Location> Locations { get; set; }
+
+        public double Price { get; set; }
     }
 }

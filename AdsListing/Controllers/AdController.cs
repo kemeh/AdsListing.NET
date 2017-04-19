@@ -64,6 +64,11 @@ namespace AdsListing.Controllers
                     .OrderBy(c => c.Name)
                     .ToList();
 
+                model.Locations = database
+                    .Locations
+                    .OrderBy(l => l.Name)
+                    .ToList();
+
                 return View(model);
             }            
         }
@@ -84,7 +89,7 @@ namespace AdsListing.Controllers
                         .First()
                         .Id;
 
-                    var ad = new Ad(authorId, model.Title, model.Description, model.CategoryId);
+                    var ad = new Ad(authorId, model.Title, model.Description, model.CategoryId, model.LocationId, model.Price);
                     //Set Ads Author
                     ad.AuthorId = authorId;
 
@@ -194,10 +199,16 @@ namespace AdsListing.Controllers
                 model.Id = ad.Id;
                 model.Title = ad.Title;
                 model.Description = ad.Description;
+                model.Price = ad.Price;
                 model.CategoryId = ad.CategoryId;
                 model.Categories = database
                     .Categories
                     .OrderBy(c => c.Name)
+                    .ToList();
+                model.LocationId = ad.LocationId;
+                model.Locations = database
+                    .Locations
+                    .OrderBy(l => l.Name)
                     .ToList();
 
                 return View(model);
@@ -220,7 +231,9 @@ namespace AdsListing.Controllers
                     //Set article properties
                     ad.Title = model.Title;
                     ad.Description = model.Description;
+                    ad.Price = model.Price;
                     ad.CategoryId = model.CategoryId;
+                    ad.LocationId = model.LocationId;
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
