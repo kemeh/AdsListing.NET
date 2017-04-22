@@ -9,6 +9,8 @@ namespace AdsListing.Models
 {
     public class Ad
     {
+        private ICollection<Photo> photos;
+
         public Ad()
         {
             
@@ -22,6 +24,7 @@ namespace AdsListing.Models
             this.CategoryId = categoryId;
             this.LocationId = locationId;
             this.Price = price;
+            this.photos = new List<Photo>();
         }
 
         [Key]
@@ -50,6 +53,8 @@ namespace AdsListing.Models
 
         [Required]
         public double Price { get; set; }
+
+        public virtual ICollection<Photo> Photos { get; set; }
 
         public bool IsAuthor(string name)
         {

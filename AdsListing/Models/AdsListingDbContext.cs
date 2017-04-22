@@ -20,6 +20,8 @@ namespace AdsListing.Models
 
         public virtual IDbSet<Location> Locations { get; set; }
 
+        public virtual IDbSet<Photo> Photos { get; set; }
+
         public static AdsListingDbContext Create()
         {
             return new AdsListingDbContext();

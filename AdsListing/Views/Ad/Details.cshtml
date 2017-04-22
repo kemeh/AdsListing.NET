@@ -14,6 +14,12 @@
         <p>
             @Model.Description
         </p>
+
+            @foreach (var photo in Model.Photos)
+            {
+                <img src="@photo.ThumbPath" alt="Alternate Text" />
+            }
+   
         <small class="author">
             --author @Model.Author.Email
         </small>

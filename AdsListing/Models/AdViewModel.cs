@@ -8,6 +8,7 @@ namespace AdsListing.Models
 {
     public class AdViewModel
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -28,5 +29,7 @@ namespace AdsListing.Models
         public ICollection<Location> Locations { get; set; }
 
         public double Price { get; set; }
+
+        public List<Photo> Photos { get; set; }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AdsListing.Models;
+using System.IO;
 
 namespace AdsListing.Controllers
 {
@@ -25,6 +27,7 @@ namespace AdsListing.Controllers
                 var ads = database
                     .Ads
                     .Include(a => a.Author)
+                    .Include(a => a.Photos)
                     .ToList();
 
                 return View(ads);
@@ -41,7 +44,12 @@ namespace AdsListing.Controllers
             using (var database = new AdsListingDbContext())
             {
                 //Get the ad from the database
-                var ad = database.Ads.Where(a => a.Id == id).Include(a => a.Author).First();
+                var ad = database
+                    .Ads
+                    .Where(a => a.Id == id)
+                    .Include(a => a.Photos)
+                    .Include(a => a.Author)
+                    .First();
 
                 if (ad == null)
                 {
@@ -70,13 +78,13 @@ namespace AdsListing.Controllers
                     .ToList();
 
                 return View(model);
-            }            
+            }
         }
 
         //POST: Ad/Create
         [HttpPost]
         [Authorize]
-        public ActionResult Create(AdViewModel model)
+        public ActionResult Create(AdViewModel model, IEnumerable<HttpPostedFileBase> images)
         {
             if (ModelState.IsValid)
             {
@@ -96,6 +104,46 @@ namespace AdsListing.Controllers
                     //Save Ad in the DB
                     database.Ads.Add(ad);
                     database.SaveChanges();
+
+                    if (images.Count() != 0 && images.FirstOrDefault() != null)
+                    {
+                        var photo = new Photo();
+
+                        //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+
+                        foreach (var image in images)
+                        {
+                            //if (allowedImageTypes.Contains(image.ContentType))
+                            //{
+                            if (image.ContentLength == 0) continue;
+
+                            var fileName = Guid.NewGuid().ToString();
+
+                            var extension = Path.GetExtension(image.FileName).ToLower();
+
+                            using (var img = Image.FromStream(image.InputStream))
+                            {
+
+                                photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
+                                photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+
+
+                                SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
+                                SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
+                                //}
+                                photo.AdId = ad.Id;
+                                database.Photos.Add(photo);
+                                database.SaveChanges();
+                            }
+                        }
+                    }
+
+                    ad.Photos = database
+                        .Photos
+                        .Where(p => p.AdId == ad.Id)
+                        .ToList();
+
+
 
                     return RedirectToAction("Index");
                 }
@@ -210,6 +258,10 @@ namespace AdsListing.Controllers
                     .Locations
                     .OrderBy(l => l.Name)
                     .ToList();
+                model.Photos = database
+                    .Photos
+                    .Where(p => p.AdId == ad.Id)
+                    .ToList();
 
                 return View(model);
             }
@@ -223,7 +275,7 @@ namespace AdsListing.Controllers
             {
                 using (var database = new AdsListingDbContext())
                 {
-                 //Get ad from the DB
+                    //Get ad from the DB
                     var ad = database
                         .Ads
                         .FirstOrDefault(a => a.Id == model.Id);
@@ -234,6 +286,12 @@ namespace AdsListing.Controllers
                     ad.Price = model.Price;
                     ad.CategoryId = model.CategoryId;
                     ad.LocationId = model.LocationId;
+                    ad.Photos = model.Photos;
+
+                    foreach (var photo in ad.Photos)
+                    {
+                       
+                    }
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
@@ -252,6 +310,49 @@ namespace AdsListing.Controllers
             bool isAuthor = ad.IsAuthor(this.User.Identity.Name);
 
             return isAdmin || isAuthor;
+        }
+
+        public Size NewImageSize(Size imageSize, Size newSize)
+        {
+            Size finalSize;
+            double tempval;
+            if (imageSize.Height > newSize.Height || imageSize.Width > newSize.Width)
+            {
+                if (imageSize.Height > imageSize.Width)
+                    tempval = newSize.Height / (imageSize.Height * 1.0);
+                else
+                    tempval = newSize.Width / (imageSize.Width * 1.0);
+
+                finalSize = new Size((int)(tempval * imageSize.Width), (int)(tempval * imageSize.Height));
+            }
+            else
+                finalSize = imageSize; // image is already small size
+
+            return finalSize;
+        }
+
+        private void SaveToFolder(Image img, string fileName, string extension, Size newSize, string pathToSave)
+        {
+            // Get new resolution
+            Size imgSize = NewImageSize(img.Size, newSize);
+            using (Image newImg = new Bitmap(img, imgSize.Width, imgSize.Height))
+            {
+                newImg.Save(Server.MapPath(pathToSave), img.RawFormat);
+            }
+        }
+
+        private void DeletePhotos(AdViewModel model, Ad ad, AdsListingDbContext db)
+        {
+            var photos = model.Photos.ToList();
+
+            foreach (var photo in photos)
+            {
+                if (photo.IsSelected)
+                {
+                    db.Photos.Remove(photo);
+
+                }
+            }
         }
     }
 }
