@@ -49,6 +49,8 @@ namespace AdsListing.Controllers
                     .Where(a => a.Id == id)
                     .Include(a => a.Photos)
                     .Include(a => a.Author)
+                    .Include(c => c.Category)
+                    .Include(l => l.Location)
                     .First();
 
                 if (ad == null)
@@ -66,16 +68,18 @@ namespace AdsListing.Controllers
         {
             using (var database = new AdsListingDbContext())
             {
-                var model = new AdViewModel();
-                model.Categories = database
-                    .Categories
-                    .OrderBy(c => c.Name)
-                    .ToList();
+                var model = new AdViewModel
+                {
+                    Categories = database
+                        .Categories
+                        .OrderBy(c => c.Name)
+                        .ToList(),
+                    Locations = database
+                        .Locations
+                        .OrderBy(l => l.Name)
+                        .ToList()
+                };
 
-                model.Locations = database
-                    .Locations
-                    .OrderBy(l => l.Name)
-                    .ToList();
 
                 return View(model);
             }
@@ -142,8 +146,6 @@ namespace AdsListing.Controllers
                         .Photos
                         .Where(p => p.AdId == ad.Id)
                         .ToList();
-
-
 
                     return RedirectToAction("Index");
                 }
@@ -243,32 +245,34 @@ namespace AdsListing.Controllers
                     return HttpNotFound();
                 }
 
-                var model = new AdViewModel();
-                model.Id = ad.Id;
-                model.Title = ad.Title;
-                model.Description = ad.Description;
-                model.Price = ad.Price;
-                model.CategoryId = ad.CategoryId;
-                model.Categories = database
-                    .Categories
-                    .OrderBy(c => c.Name)
-                    .ToList();
-                model.LocationId = ad.LocationId;
-                model.Locations = database
-                    .Locations
-                    .OrderBy(l => l.Name)
-                    .ToList();
-                model.Photos = database
-                    .Photos
-                    .Where(p => p.AdId == ad.Id)
-                    .ToList();
+                var model = new AdViewModel
+                {
+                    Id = ad.Id,
+                    Title = ad.Title,
+                    Description = ad.Description,
+                    Price = ad.Price,
+                    CategoryId = ad.CategoryId,
+                    Categories = database
+                        .Categories
+                        .OrderBy(c => c.Name)
+                        .ToList(),
+                    LocationId = ad.LocationId,
+                    Locations = database
+                        .Locations
+                        .OrderBy(l => l.Name)
+                        .ToList(),
+                    Photos = database
+                        .Photos
+                        .Where(p => p.AdId == ad.Id)
+                        .ToList()
+                };
 
                 return View(model);
             }
         }
 
         [HttpPost]
-        public ActionResult Edit(AdViewModel model)
+        public ActionResult Edit(AdViewModel model, IEnumerable<HttpPostedFileBase> images)
         {
             //Check if model state is valid
             if (ModelState.IsValid)
@@ -280,28 +284,79 @@ namespace AdsListing.Controllers
                         .Ads
                         .FirstOrDefault(a => a.Id == model.Id);
 
+                    //var photos = database
+                    //    .Photos
+                    //    .Where(p => p.AdId == model.Id)
+                    //    .ToList();                    
+
                     //Set article properties
                     ad.Title = model.Title;
                     ad.Description = model.Description;
                     ad.Price = model.Price;
                     ad.CategoryId = model.CategoryId;
                     ad.LocationId = model.LocationId;
-                    ad.Photos = model.Photos;
 
-                    foreach (var photo in ad.Photos)
-                    {
-                       
-                    }
+                    //ad.Photos = photos;
+                    ad.Status = model.Status;
+
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
                     database.SaveChanges();
+
+                    //if (images.Count() != 0 && images.FirstOrDefault() != null)
+                    //{
+                    //    var photo = new Photo();
+
+                    //    //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+
+                    //    foreach (var image in images)
+                    //    {
+                    //        //if (allowedImageTypes.Contains(image.ContentType))
+                    //        //{
+                    //        if (image.ContentLength == 0) continue;
+
+                    //        var fileName = Guid.NewGuid().ToString();
+
+                    //        var extension = Path.GetExtension(image.FileName).ToLower();
+
+                    //        using (var img = Image.FromStream(image.InputStream))
+                    //        {
+
+                    //            photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
+                    //            photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+
+
+                    //            SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
+                    //            SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
+                    //            //}
+                    //            photo.AdId = ad.Id;
+                    //            database.Photos.Add(photo);
+                    //            database.SaveChanges();
+                    //        }
+                    //    }
+                    //}
+
+                    //ad.Photos = database
+                    //    .Photos
+                    //    .Where(p => p.AdId == ad.Id)
+                    //    .ToList();
 
                     return RedirectToAction("Index");
                 }
             }
 
             return View(model);
+        }
+
+        public ActionResult AdminList()
+        {
+            using (var database = new AdsListingDbContext())
+            {
+                var ads = database.Ads.ToList();
+
+                return View(ads);
+            }
         }
 
         private bool IsUserAuthorizedToEdit(Ad ad)

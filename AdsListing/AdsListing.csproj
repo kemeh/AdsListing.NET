@@ -209,6 +209,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Ad.cs" />
     <Compile Include="Models\AdsListingDbContext.cs" />
+    <Compile Include="Models\AdStatus.cs" />
     <Compile Include="Models\AdViewModel.cs" />
     <Compile Include="Models\AplicationUser.cs" />
     <Compile Include="Models\Category.cs" />
@@ -293,6 +294,7 @@
     <Content Include="Views\Location\Create.cshtml" />
     <Content Include="Views\Location\Edit.cshtml" />
     <Content Include="Views\Location\Delete.cshtml" />
+    <Content Include="Views\Ad\AdminList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

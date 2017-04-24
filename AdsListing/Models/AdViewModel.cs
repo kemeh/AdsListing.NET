@@ -15,7 +15,6 @@ namespace AdsListing.Models
         [StringLength(50)]
         public string Title { get; set; }
 
-        [Required]
         public string Description { get; set; }
 
         public string AuthorId { get; set; }
@@ -31,5 +30,7 @@ namespace AdsListing.Models
         public double Price { get; set; }
 
         public List<Photo> Photos { get; set; }
+
+        public AdStatus Status { get; set; }
     }
 }

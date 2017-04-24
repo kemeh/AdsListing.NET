@@ -25,6 +25,8 @@ namespace AdsListing.Models
             this.LocationId = locationId;
             this.Price = price;
             this.photos = new List<Photo>();
+            this.Status = AdStatus.WaitingApproval;
+            this.DateCreated = DateTime.UtcNow;
         }
 
         [Key]
@@ -49,12 +51,15 @@ namespace AdsListing.Models
         [ForeignKey("Location")]
         public int LocationId { get; set; }
 
-        public virtual  Location Location { get; set; }
+        public virtual Location Location { get; set; }
 
-        [Required]
         public double Price { get; set; }
 
         public virtual ICollection<Photo> Photos { get; set; }
+
+        public AdStatus Status { get; set; }
+
+        public DateTime DateCreated { get; set; }
 
         public bool IsAuthor(string name)
         {

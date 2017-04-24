@@ -1,0 +1,38 @@
+﻿@model List<AdsListing.Models.Ad>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="container">
+    <div class="well">
+        <h2>All Ads - @Html.ActionLink("Create", "Create", "Ad", null, new { @class = "btn btn-warning" })</h2>
+        <div class="row">
+            <table class="table table-striped table-hover col-sm-12">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                        <th>Status</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ad in Model)
+                    {
+                        <tr>
+                            <td>@ad.Id</td>
+                            <td>@ad.Title</td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", "Ad", new { @id = ad.Id }, null)
+                                @Html.ActionLink("Delete", "Delete", "Ad", new { @id = ad.Id }, null)                               
+                            </td>
+                            <td>@ad.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,33 @@
-﻿@{
+﻿@using AdsListing.Models
+@model List<AdsListing.Models.Ad>
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<h1>Index Page</h1>
+<div class="row">
+    @if (Model.Any())
+    {
+        foreach (var ad in Model.Where(a => a.Status == AdStatus.Approved).OrderByDescending(d => d.DateCreated))
+        {
+            <div class="col-sm-6 col-md-2">
+                <div class="thumbnail">
+                    @if (ad.Photos.Any())
+                    {
+                        <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath" alt="Missing Image"/></a>
+                    }
+                    else
+                    {
+                        <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" alt="Missing Image" href="/Ad/Details/@ad.Id" /></a>
+                    }
+                    <div class="caption">
+                        <a href="/Ad/Details/@ad.Id">@ad.Title</a>
+
+                        <p>@ad.Location.Name</p>
+                        <h4>$@ad.Price</h4>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

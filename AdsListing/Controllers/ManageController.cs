@@ -62,10 +62,24 @@ namespace AdsListing.Controllers
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
-
+            var database = new AdsListingDbContext();
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
+                UserAds = database
+                .Ads
+                .Where(a => a.AuthorId.Equals(userId))
+                .ToList(),
+                Email = database
+                .Users
+                .Where(u => u.Id.Equals(userId))
+                .First()
+                .Email,
+                FullName = database
+                .Users
+                .Where(u => u.Id.Equals(userId))
+                .First()
+                .FullName,
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),

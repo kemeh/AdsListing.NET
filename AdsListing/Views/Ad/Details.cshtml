@@ -4,33 +4,59 @@
     ViewBag.Title = "Details";
 }
 
-<div class="container">
-    <article>
-        <header>
-            <h2>
-                @Model.Title
-            </h2>
-        </header>
+@Html.ActionLink("Back", "Index", "Ad", null, new { @class = "btn btn-default btn-xs" })
+@if (User.IsInRole("Admin") || Model.IsAuthor(User.Identity.Name))
+{
+    @Html.ActionLink("Edit", "Edit", "Ad", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
+    @Html.ActionLink("Delete", "Delete", "Ad", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })
+}
+
+<br />
+<br />
+<div class="row">
+    
+    <div class="col-sm-8">
+        <article>
+            <header>
+                
+                @if (Model.Photos.Any())
+                {
+                    <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block"/>
+                    <br/>
+                    foreach (var photo in Model.Photos.Skip(1))
+                    {
+                        <img src="@photo.ThumbPath" alt="Something is wrong with the image" class="thumbnail" style="display: inline-block"/>
+                    }
+                }
+                else
+                {
+                    <img src="/Content/Images/no-image-featured-image.png" alt="Something is wrong with the image" class="center-block" />
+                }
+
+
+            </header>
+            <small class="author">
+                
+            </small>
+            <footer class="pull-right">
+
+            </footer>
+        </article>
+    </div>
+    <div class="col-sm-4">
+        <h3>$<span class="badge" style="font-size: 25px">@Model.Price</span>
+        </h3>
+        <h2>
+            @Model.Title
+        </h2>
         <p>
             @Model.Description
         </p>
+        <div>Posted by: <strong>@Model.Author.FullName</strong></div>
+        <div>Created on: <strong>@Model.DateCreated</strong></div>
+        <div>Category: <strong>@Model.Category.Name</strong></div>
+        <div>Location: <strong>@Model.Location.Name</strong></div>
+    </div>
 
-            @foreach (var photo in Model.Photos)
-            {
-                <img src="@photo.ThumbPath" alt="Alternate Text" />
-            }
-   
-        <small class="author">
-            --author @Model.Author.Email
-        </small>
-        <footer class="pull-right">
-            @if (User.IsInRole("Admin") || Model.IsAuthor(User.Identity.Name))
-            {
-                @Html.ActionLink("Edit", "Edit", "Ad", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
-                @Html.ActionLink("Delete", "Delete", "Ad", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })
-            }            
-            @Html.ActionLink("Back", "Index", "Ad", null, new {@class = "btn btn-default btn-xs"})
-        </footer>
-    </article>
 </div>
 <hr />

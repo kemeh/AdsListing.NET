@@ -13,7 +13,17 @@ namespace AdsListing.Controllers
     {
         public ActionResult Index()
         {
-            return RedirectToAction("ListCategories");
+            using (var database = new AdsListingDbContext())
+            {
+                var ads = database
+                    .Ads
+                    .Include(a => a.Photos)
+                    .Include(a => a.Location)
+                    .ToList();
+
+                return View(ads);
+            }
+            
         }
 
         public ActionResult ListCategories()
