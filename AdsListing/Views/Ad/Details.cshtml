@@ -21,7 +21,7 @@
                 
                 @if (Model.Photos.Any())
                 {
-                    <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block"/>
+                    <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block img-responsive" />
                     <br/>
                     foreach (var photo in Model.Photos.Skip(1))
                     {

@@ -1,4 +1,6 @@
-﻿@using AdsListing.Models
+﻿@using System.Collections.Specialized
+@using System.Data.Entity
+@using AdsListing.Models
 @model List<AdsListing.Models.Ad>
 
 @{
@@ -6,11 +8,14 @@
 }
 
 <div class="row">
-    @if (Model.Any())
-    {
-        foreach (var ad in Model.Where(a => a.Status == AdStatus.Approved).OrderByDescending(d => d.DateCreated))
+    <div class="col-sm-3">
+        @Html.Partial("_ViewByCategory", new AdsListingDbContext().Categories.OrderBy(c => c.Name).ToList())
+    </div>
+    <div class="col-sm-9 col-md-2 list-inline">
+        @if (Model.Any())
         {
-            <div class="col-sm-6 col-md-2">
+            foreach (var ad in Model.Where(a => a.Status == AdStatus.Approved).OrderByDescending(d => d.DateCreated))
+            {
                 <div class="thumbnail">
                     @if (ad.Photos.Any())
                     {
@@ -27,7 +32,8 @@
                         <h4>$@ad.Price</h4>
                     </div>
                 </div>
-            </div>
+            }
         }
-    }
+    </div>
 </div>
+

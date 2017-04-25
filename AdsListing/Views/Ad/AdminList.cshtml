@@ -13,22 +13,25 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Actions</th>
                         <th>Status</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
 
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ad in Model)
+                    @foreach (var ad in Model.OrderByDescending(d => d.DateCreated))
                     {
                         <tr>
                             <td>@ad.Id</td>
                             <td>@ad.Title</td>
+                            <td>@ad.Status</td>
+                            <td>@ad.DateCreated</td>
                             <td>
                                 @Html.ActionLink("Edit", "Edit", "Ad", new { @id = ad.Id }, null)
-                                @Html.ActionLink("Delete", "Delete", "Ad", new { @id = ad.Id }, null)                               
+                                @Html.ActionLink("Delete", "Delete", "Ad", new { @id = ad.Id }, null)
                             </td>
-                            <td>@ad.Status</td>
+                            
                         </tr>
                     }
                 </tbody>
