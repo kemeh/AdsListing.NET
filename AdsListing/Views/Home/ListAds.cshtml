@@ -9,10 +9,38 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-sm-3">
-            @Html.Partial("_ViewByCategory", new AdsListingDbContext().Categories.OrderBy(c => c.Name).ToList())
-        </div>
+        @using (Html.BeginForm("ListAds", "Home", FormMethod.Get))
+            {
+            <div class="text-center">
+                <input type="text" class="form-control" name="search" style="display: inline-block" value="@Request.QueryString["search"]" />
+                @Html.DropDownList("locations", null, "Entire country", new { @class = "btn btn-default" })
+                @Html.DropDownList("category", null, "All Categories", new { @class = "btn btn-default" })
+                <input type="submit" value="search" class="btn btn-default" />
+            </div>
+        }
+
         <div class="col-sm-9">
+
+            @{
+                var locations = new AdsListingDbContext().Locations.ToList();
+
+                var options = new List<SelectListItem>();
+
+                foreach (var lo in locations)
+                {
+                    options.Add(new SelectListItem
+                    {
+                        Text = lo.Name,
+                        Value = lo.Id.ToString()
+                    });
+                }
+            }
+
+            @if (!Model.Any())
+            {
+                <h2>No More Ads!</h2>
+            }
+
             @foreach (var ad in Model)
             {
                 <article>
@@ -27,10 +55,22 @@
                     <footer class="pull-right">
                         <small class="author">
                             --author @ad.Author.FullName
+                            @ad.Location.Name
                         </small>
                     </footer>
                 </article>
             }
+            @{
+                var currentCategoryQuery = Request.QueryString["categoryId"];
+                var currentSearchQuery = Request.QueryString["search"];
+                var currentLocationQuery = Request.QueryString["locations"];
+            }
+            <a href="/Home/ListAds?categoryId=@(currentCategoryQuery != null ? currentCategoryQuery : string.Empty)&page=@(ViewBag.CurrentPage - 1)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(ViewBag.CurrentPage == 1 ? "disabled" : string.Empty)">Previous</a>
+            <a href="/Home/ListAds?categoryId=@(currentCategoryQuery != null ? currentCategoryQuery : string.Empty)&page=@(ViewBag.CurrentPage + 1)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(!Model.Any() || Model.Count < 5 ? "disabled" : string.Empty)">Next</a>
         </div>
     </div>
-</div>  
+</div>
+
+<p>
+
+</p>

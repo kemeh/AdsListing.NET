@@ -26,7 +26,7 @@
 
             <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-4">
-                    @Html.ActionLink("Cancel", "List", "User", null, new { @class = "btn btn-default" })
+                    @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default btn-xs" })
                     <input type="submit" value="Delete" class="btn btn-danger" />
                 </div>
             </div>

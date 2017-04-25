@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 <div class="col-sm-4 col-sm-offset-4">
-                    @Html.ActionLink("Cancel", "List", "Category", new { @class = "btn btn-default" })
+                    @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default" })
                     <input type="submit" value="Edit" class="btn btn-success" />
                 </div>
             </div>

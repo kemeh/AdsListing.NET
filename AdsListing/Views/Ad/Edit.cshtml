@@ -39,7 +39,7 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.Categories, new { @class = "control-label col-sm-4" })
                 <div class="dropdown col-sm-4">
-                   @Html.DropDownListFor(m => m.CategoryId,
+                    @Html.DropDownListFor(m => m.CategoryId,
                         new SelectList(Model.Categories, "Id", "Name", Model.CategoryId),
                         new { @class = "btn btn-info col-sm-12" })
                 </div>
@@ -55,13 +55,13 @@
             </div>
 
             if (User.IsInRole("Admin"))
-             {
-                 <div class="form-group">
-                     @Html.LabelFor(m => m.Status, new {@class = "control-label col-sm-4"})
-                     <div class="dropdown col-sm-4">
-                         @Html.EnumDropDownListFor(m => m.Status, new { @class = "btn btn-warning col-sm-12"})
-                     </div>
-                 </div>
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Status, new { @class = "control-label col-sm-4" })
+                    <div class="dropdown col-sm-4">
+                        @Html.EnumDropDownListFor(m => m.Status, new { @class = "btn btn-warning col-sm-12" })
+                    </div>
+                </div>
             }
 
             <div class="form-group">
@@ -72,25 +72,25 @@
             </div>
 
             <div class="form-group">
-                @for(int i = 0; i < Model.Photos.Count; i++)
+                @for (int i = 0; i < Model.Photos.Count; i++)
                 {
                     <div class="col-sm-offset-4 col-sm-4">
- 
-                        <img src="@Model.Photos[i].ThumbPath" alt="Alternate Text"/>
+
+                        <img src="@Model.Photos[i].ThumbPath" alt="Alternate Text" />
                         @Html.CheckBoxFor(m => m.Photos[i].IsSelected)
                         @Html.HiddenFor(m => m.Photos)
                         DELETE
                     </div>
-                <br />
-                <br />
+                    <br />
+                    <br />
                 }
             </div>
-                <div class="form-group">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        @Html.ActionLink("Cancel", "Index", "Ad", null, new { @class = "btn btn-default" })
-                        <input type="submit" value="Edit" class="btn btn-success" />
-                    </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-4">
+                    @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default" })
+                    <input type="submit" value="Edit" class="btn btn-success" />
                 </div>
-                }
             </div>
+        }
+    </div>
 </div>

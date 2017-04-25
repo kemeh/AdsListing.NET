@@ -24,7 +24,7 @@
                     {
                         <tr>
                             <td>@ad.Id</td>
-                            <td>@ad.Title</td>
+                            <td>@Html.ActionLink(ad.Title, "Details", "Ad", new { @id = ad.Id }, null)</td>
                             <td>@ad.Status</td>
                             <td>@ad.DateCreated</td>
                             <td>

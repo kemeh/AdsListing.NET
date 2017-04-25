@@ -4,7 +4,7 @@
     ViewBag.Title = "Details";
 }
 
-@Html.ActionLink("Back", "Index", "Ad", null, new { @class = "btn btn-default btn-xs" })
+@Html.ActionLink("Back", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default btn-xs" })
 @if (User.IsInRole("Admin") || Model.IsAuthor(User.Identity.Name))
 {
     @Html.ActionLink("Edit", "Edit", "Ad", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
