@@ -1,4 +1,6 @@
-﻿namespace AdsListing.Models
+﻿using System.ComponentModel;
+
+namespace AdsListing.Models
 {
     public enum AdStatus
     {
