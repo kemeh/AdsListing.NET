@@ -45,6 +45,7 @@
 
                             <p>@ad.Location.Name</p>
                             <h4>$@ad.Price</h4>
+                            <p>@ad.Status</p>
                             @Html.ActionLink("Edit", "Edit", "Ad", new { @id = ad.Id }, new { @class = "btn btn-success btn-xs"})
                             @Html.ActionLink("Delete", "Delete", "Ad", new { @id = ad.Id }, new { @class = "btn btn-danger btn-xs" })                            
                         </div>

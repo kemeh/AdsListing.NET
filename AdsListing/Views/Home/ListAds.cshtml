@@ -56,17 +56,18 @@
                         <small class="author">
                             --author @ad.Author.FullName
                             @ad.Location.Name
+                            @ad.Category.Name
                         </small>
                     </footer>
                 </article>
             }
             @{
-                var currentCategoryQuery = Request.QueryString["categoryId"];
+                var currentCategoryQuery = Request.QueryString["category"];
                 var currentSearchQuery = Request.QueryString["search"];
                 var currentLocationQuery = Request.QueryString["locations"];
             }
-            <a href="/Home/ListAds?categoryId=@(currentCategoryQuery != null ? currentCategoryQuery : string.Empty)&page=@(ViewBag.CurrentPage - 1)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(ViewBag.CurrentPage == 1 ? "disabled" : string.Empty)">Previous</a>
-            <a href="/Home/ListAds?categoryId=@(currentCategoryQuery != null ? currentCategoryQuery : string.Empty)&page=@(ViewBag.CurrentPage + 1)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(!Model.Any() || Model.Count < 5 ? "disabled" : string.Empty)">Next</a>
+            <a href="/Home/ListAds?page=@(ViewBag.CurrentPage - 1)@(currentCategoryQuery != null ? "&category=" + currentCategoryQuery : string.Empty)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(ViewBag.CurrentPage == 1 ? "disabled" : string.Empty)">Previous</a>
+            <a href="/Home/ListAds?page=@(ViewBag.CurrentPage + 1)@(currentCategoryQuery != null ? "&category=" + currentCategoryQuery : string.Empty)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(!Model.Any() || Model.Count < 5 ? "disabled" : string.Empty)">Next</a>
         </div>
     </div>
 </div>
