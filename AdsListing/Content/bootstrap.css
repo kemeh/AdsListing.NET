@@ -5038,11 +5038,13 @@ a.badge:focus {
   -webkit-transition: border 0.2s ease-in-out;
   -o-transition: border 0.2s ease-in-out;
   transition: border 0.2s ease-in-out;
+    height: 19em;
 }
 .thumbnail > img,
 .thumbnail a > img {
   margin-left: auto;
-  margin-right: auto;
+    margin-right: auto;
+    height: 8em;
 }
 a.thumbnail:hover,
 a.thumbnail:focus,
@@ -7055,4 +7057,16 @@ article .author  {
 }
 article .author  {
   content: '\2014 \00A0';
+}
+.thumbnail a {
+    margin-top: 6px;
+}
+.ads {
+    text-align: center;
+    background-color: #18bc9c;
+    color: black;
+    font-weight: 700;
+    height: 1.3em;
+    padding: 0.1em;
+    border-radius: 15px;
 }

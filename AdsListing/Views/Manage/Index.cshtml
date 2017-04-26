@@ -26,19 +26,20 @@
             }
             ]
         </dd>
-        <dt>My Ads:</dt>
         <dd>
+            <h3 class="ads">My Ads:</h3>
+
             @foreach (var ad in @Model.UserAds)
             {
                 <div class="col-sm-6 col-md-2">
                     <div class="thumbnail">
                         @if (ad.Photos.Any())
                         {
-                        <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath" alt="Missing Image" /></a>
+                            <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath" alt="Missing Image"/></a>
                         }
                         else
                         {
-                        <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" alt="Missing Image" href="/Ad/Details/@ad.Id" /></a>
+                            <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" alt="Missing Image" href="/Ad/Details/@ad.Id"/></a>
                         }
                         <div class="caption">
                             <a href="/Ad/Details/@ad.Id">@ad.Title</a>
@@ -46,8 +47,8 @@
                             <p>@ad.Location.Name</p>
                             <h4>$@ad.Price</h4>
                             <p>@ad.Status</p>
-                            @Html.ActionLink("Edit", "Edit", "Ad", new { @id = ad.Id }, new { @class = "btn btn-success btn-xs"})
-                            @Html.ActionLink("Delete", "Delete", "Ad", new { @id = ad.Id }, new { @class = "btn btn-danger btn-xs" })                            
+                            @Html.ActionLink("Edit", "Edit", "Ad", new {@id = ad.Id}, new {@class = "btn btn-success btn-xs"})
+                            @Html.ActionLink("Delete", "Delete", "Ad", new {@id = ad.Id}, new {@class = "btn btn-danger btn-xs"})
                         </div>
                     </div>
                 </div>

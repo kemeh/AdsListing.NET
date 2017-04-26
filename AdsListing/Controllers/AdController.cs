@@ -376,6 +376,9 @@ namespace AdsListing.Controllers
                 if (imageSize.Height > imageSize.Width)
                     tempval = newSize.Height / (imageSize.Height * 1.0);
                 else
+                {
+                    
+                }
                     tempval = newSize.Width / (imageSize.Width * 1.0);
 
                 finalSize = new Size((int)(tempval * imageSize.Width), (int)(tempval * imageSize.Height));
