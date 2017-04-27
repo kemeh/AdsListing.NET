@@ -80,9 +80,9 @@ namespace AdsListing.Controllers
 
                 ViewBag.Category = new SelectList(categoryNames.Keys);
 
-                var pageSize = 5;
+                var pageSize = 12;
 
-                var adsQuery = database.Ads.AsQueryable();
+                var adsQuery = database.Ads.Where(a => a.Status == AdStatus.Approved).AsQueryable();
 
                 if (!string.IsNullOrEmpty(search))
                 {
@@ -110,6 +110,7 @@ namespace AdsListing.Controllers
                     .Take(pageSize)
                     .Include(a => a.Location)
                     .Include(a => a.Category)
+                    .Include(a => a.Photos)
                     .Include(a => a.Author)
                     .ToList();
 

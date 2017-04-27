@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using AdsListing.Models;
 using System.IO;
+using WebGrease.Css.Extensions;
 
 namespace AdsListing.Controllers
 {
@@ -80,7 +81,6 @@ namespace AdsListing.Controllers
                         .ToList()
                 };
 
-
                 return View(model);
             }
         }
@@ -90,10 +90,11 @@ namespace AdsListing.Controllers
         [Authorize]
         public ActionResult Create(AdViewModel model, IEnumerable<HttpPostedFileBase> images)
         {
-            if (ModelState.IsValid)
+            using (var database = new AdsListingDbContext())
             {
-                using (var database = new AdsListingDbContext())
+                if (ModelState.IsValid)
                 {
+
                     //Get Author Id
                     var authorId = database
                         .Users
@@ -122,15 +123,21 @@ namespace AdsListing.Controllers
                             if (image.ContentLength == 0) continue;
 
                             var fileName = Guid.NewGuid().ToString();
+                            var extension = "";
 
-                            var extension = Path.GetExtension(image.FileName).ToLower();
-
+                            if (Path.GetExtension(image.FileName) == null)
+                            {
+                                extension = "add";
+                            }
+                            else
+                            {
+                                extension = Path.GetExtension(image.FileName).ToLower();
+                            }
+                            
                             using (var img = Image.FromStream(image.InputStream))
                             {
-
                                 photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
                                 photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
-
 
                                 SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
                                 SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
@@ -149,9 +156,19 @@ namespace AdsListing.Controllers
 
                     return RedirectToAction("Index");
                 }
-            }
 
-            return View(model);
+
+                model.Categories = database
+                    .Categories
+                    .OrderBy(c => c.Name)
+                    .ToList();
+                model.Locations = database
+                    .Locations
+                    .OrderBy(l => l.Name)
+                    .ToList();
+
+                return View(model);
+            }
         }
 
         // Get: Ad/Delete
@@ -245,6 +262,11 @@ namespace AdsListing.Controllers
                     return HttpNotFound();
                 }
 
+                var photos = database
+                    .Photos
+                    .Where(p => p.AdId == id)
+                    .ToList();
+
                 var model = new AdViewModel
                 {
                     Id = ad.Id,
@@ -261,10 +283,7 @@ namespace AdsListing.Controllers
                         .Locations
                         .OrderBy(l => l.Name)
                         .ToList(),
-                    Photos = database
-                        .Photos
-                        .Where(p => p.AdId == ad.Id)
-                        .ToList()
+                    Photos = photos
                 };
 
                 return View(model);
@@ -272,22 +291,18 @@ namespace AdsListing.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(AdViewModel model, IEnumerable<HttpPostedFileBase> images)
+        public ActionResult Edit(AdViewModel model, IEnumerable<HttpPostedFileBase> images, int[] deleteInputs)
         {
-            //Check if model state is valid
-            if (ModelState.IsValid)
+            using (var database = new AdsListingDbContext())
             {
-                using (var database = new AdsListingDbContext())
+                //Check if model state is valid
+                if (ModelState.IsValid)
                 {
+
                     //Get ad from the DB
                     var ad = database
                         .Ads
                         .FirstOrDefault(a => a.Id == model.Id);
-
-                    //var photos = database
-                    //    .Photos
-                    //    .Where(p => p.AdId == model.Id)
-                    //    .ToList();                    
 
                     //Set article properties
                     ad.Title = model.Title;
@@ -295,58 +310,74 @@ namespace AdsListing.Controllers
                     ad.Price = model.Price;
                     ad.CategoryId = model.CategoryId;
                     ad.LocationId = model.LocationId;
-
-                    //ad.Photos = photos;
-                    ad.Status = model.Status;
-
+                    ad.Status = model.Status;                   
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
                     database.SaveChanges();
 
-                    //if (images.Count() != 0 && images.FirstOrDefault() != null)
-                    //{
-                    //    var photo = new Photo();
+                    if (images.Count() != 0 && images.FirstOrDefault() != null)
+                    {
+                        var photo = new Photo();
 
-                    //    //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+                        //    //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
 
-                    //    foreach (var image in images)
-                    //    {
-                    //        //if (allowedImageTypes.Contains(image.ContentType))
-                    //        //{
-                    //        if (image.ContentLength == 0) continue;
+                        foreach (var image in images)
+                        {
+                            //if (allowedImageTypes.Contains(image.ContentType))
+                            //{
+                            if (image.ContentLength == 0) continue;
 
-                    //        var fileName = Guid.NewGuid().ToString();
+                            var fileName = Guid.NewGuid().ToString();
 
-                    //        var extension = Path.GetExtension(image.FileName).ToLower();
+                            var extension = Path.GetExtension(image.FileName).ToLower();
 
-                    //        using (var img = Image.FromStream(image.InputStream))
-                    //        {
+                            using (var img = Image.FromStream(image.InputStream))
+                            {
 
-                    //            photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
-                    //            photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+                                photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
+                                photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
 
 
-                    //            SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
-                    //            SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
-                    //            //}
-                    //            photo.AdId = ad.Id;
-                    //            database.Photos.Add(photo);
-                    //            database.SaveChanges();
-                    //        }
-                    //    }
-                    //}
+                                SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
+                                SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
+                                //}
+                                photo.AdId = ad.Id;
+                                database.Photos.Add(photo);
+                                database.SaveChanges();
+                            }
+                        }
+                    }
 
-                    //ad.Photos = database
-                    //    .Photos
-                    //    .Where(p => p.AdId == ad.Id)
-                    //    .ToList();
+                    if (deleteInputs != null && deleteInputs.Length > 0)
+                    {
+                        DeletePhotos(deleteInputs, model.Id);
+                    }
+
+                    ad.Photos = database
+                        .Photos
+                        .Where(p => p.AdId == ad.Id)
+                        .ToList();
 
                     return RedirectToAction("Index");
                 }
-            }
 
-            return View(model);
+                model.Categories = database
+                        .Categories
+                        .OrderBy(c => c.Name)
+                        .ToList();
+                model.Locations = database
+                    .Locations
+                    .OrderBy(l => l.Name)
+                    .ToList();
+
+                model.Photos = database
+                        .Photos
+                        .Where(p => p.AdId == model.Id)
+                        .ToList();
+
+                return View(model);
+            }
         }
 
         public ActionResult AdminList()
@@ -374,12 +405,14 @@ namespace AdsListing.Controllers
             if (imageSize.Height > newSize.Height || imageSize.Width > newSize.Width)
             {
                 if (imageSize.Height > imageSize.Width)
+                {
                     tempval = newSize.Height / (imageSize.Height * 1.0);
+                }
                 else
                 {
-                    
-                }
                     tempval = newSize.Width / (imageSize.Width * 1.0);
+                }
+
 
                 finalSize = new Size((int)(tempval * imageSize.Width), (int)(tempval * imageSize.Height));
             }
@@ -399,16 +432,31 @@ namespace AdsListing.Controllers
             }
         }
 
-        private void DeletePhotos(AdViewModel model, Ad ad, AdsListingDbContext db)
+        private void DeletePhotos(int[] photos, int id)
         {
-            var photos = model.Photos.ToList();
-
-            foreach (var photo in photos)
+            using (var database = new AdsListingDbContext())
             {
-                if (photo.IsSelected)
-                {
-                    db.Photos.Remove(photo);
+                var adPhotos = database
+                    .Photos
+                    .Where(p => p.AdId == id)
+                    .ToList();
 
+                foreach (var adPhoto in adPhotos)
+                {
+                    foreach (var photo in photos)
+                    {
+                        if (adPhoto.Id == photo)
+                        {
+                            //string fullPathToRemove = Request.MapPath(adPhoto.ThumbPath);
+
+                            database.Photos.Remove(adPhoto);
+                            //if (System.IO.File.Exists(adPhoto.ThumbPath))
+                            //{
+                            //    System.IO.File.Delete(adPhoto.ThumbPath);
+                            //}
+                            database.SaveChanges();
+                        }
+                    }
                 }
             }
         }

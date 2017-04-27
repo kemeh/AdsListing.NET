@@ -3084,6 +3084,7 @@ fieldset[disabled] .btn {
 a.btn.disabled,
 fieldset[disabled] a.btn {
   pointer-events: none;
+    display: none;
 }
 .btn-default {
   color: #ffffff;
@@ -7069,4 +7070,7 @@ article .author  {
     height: 1.3em;
     padding: 0.1em;
     border-radius: 15px;
+}
+header {
+    margin: 2em 0;
 }

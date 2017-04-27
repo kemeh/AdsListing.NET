@@ -7,7 +7,7 @@
 <div class="container">
     <div class="well">
         <h2>Edit Ad</h2>
-        @using (Html.BeginForm("Edit", "Ad", FormMethod.Post, new { @class = "form-horizontal" }))
+        @using (Html.BeginForm("Edit", "Ad", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
@@ -75,11 +75,8 @@
                 @for (int i = 0; i < Model.Photos.Count; i++)
                 {
                     <div class="col-sm-offset-4 col-sm-4">
-
+                        <input type="checkbox" name="deleteInputs" value="@Model.Photos[i].Id" />
                         <img src="@Model.Photos[i].ThumbPath" alt="Alternate Text" />
-                        @Html.CheckBoxFor(m => m.Photos[i].IsSelected)
-                        @Html.HiddenFor(m => m.Photos)
-                        DELETE
                     </div>
                     <br />
                     <br />

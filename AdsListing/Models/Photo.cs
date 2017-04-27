@@ -17,7 +17,5 @@ namespace AdsListing.Models
         public int AdId { get; set; }
 
         public virtual Ad Ad { get; set; }
-
-        public bool IsSelected { get; set; }
     }
 }

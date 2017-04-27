@@ -11,7 +11,7 @@ namespace AdsListing.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Title is required")]
         [StringLength(50)]
         public string Title { get; set; }
 

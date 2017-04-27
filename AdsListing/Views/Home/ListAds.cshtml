@@ -6,72 +6,60 @@
     ViewBag.Title = "List";
 }
 
+<header>
+    @using (Html.BeginForm("ListAds", "Home", FormMethod.Get))
+            {
+        <div class="text-center">
+            <input type="text" class="form-control" name="search" style="display: inline-block" value="@Request.QueryString["search"]" />
+            @Html.DropDownList("locations", null, "Entire country", new { @class = "btn btn-default" })
+            @Html.DropDownList("category", null, "All Categories", new { @class = "btn btn-default" })
+            <input type="submit" value="search" class="btn btn-default" />
+        </div>
+    }
+</header>
+
+
+
 <div class="container">
     <div class="row">
-
-        @using (Html.BeginForm("ListAds", "Home", FormMethod.Get))
-            {
-            <div class="text-center">
-                <input type="text" class="form-control" name="search" style="display: inline-block" value="@Request.QueryString["search"]" />
-                @Html.DropDownList("locations", null, "Entire country", new { @class = "btn btn-default" })
-                @Html.DropDownList("category", null, "All Categories", new { @class = "btn btn-default" })
-                <input type="submit" value="search" class="btn btn-default" />
-            </div>
-        }
-
         <div class="col-sm-9">
-
-            @{
-                var locations = new AdsListingDbContext().Locations.ToList();
-
-                var options = new List<SelectListItem>();
-
-                foreach (var lo in locations)
-                {
-                    options.Add(new SelectListItem
-                    {
-                        Text = lo.Name,
-                        Value = lo.Id.ToString()
-                    });
-                }
-            }
-
             @if (!Model.Any())
             {
                 <h2>No More Ads!</h2>
             }
+            <div class="container">
+                <div class="row">
+                    @foreach (var ad in Model)
+                    {
+                        <div class="col-sm-2">
+                            <div class="thumbnail">
+                                @if (@ad.Photos.Any())
+                                {
+                                    <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath"/></a>
+                                }
+                                else
+                                {
+                                    <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" /></a>
+                                }                               
+                                <a href="/Ad/Details/@ad.Id">
+                                    <h4>@ad.Title</h4>
+                                </a>
+                                <p>$@ad.Price</p>
+                                <p>@ad.Location.Name</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
 
-            @foreach (var ad in Model)
-            {
-                <article>
-                    <header>
-                        <h2>
-                            @Html.ActionLink(@ad.Title, "Details", "Ad", new { @id = ad.Id }, null)
-                        </h2>
-                    </header>
-                    <p>
-                        @ad.Description
-                    </p>
-                    <footer class="pull-right">
-                        <small class="author">
-                            --author @ad.Author.FullName
-                            @ad.Location.Name
-                            @ad.Category.Name
-                        </small>
-                    </footer>
-                </article>
-            }
             @{
                 var currentCategoryQuery = Request.QueryString["category"];
                 var currentSearchQuery = Request.QueryString["search"];
                 var currentLocationQuery = Request.QueryString["locations"];
             }
             <a href="/Home/ListAds?page=@(ViewBag.CurrentPage - 1)@(currentCategoryQuery != null ? "&category=" + currentCategoryQuery : string.Empty)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(ViewBag.CurrentPage == 1 ? "disabled" : string.Empty)">Previous</a>
-            <a href="/Home/ListAds?page=@(ViewBag.CurrentPage + 1)@(currentCategoryQuery != null ? "&category=" + currentCategoryQuery : string.Empty)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(!Model.Any() || Model.Count < 5 ? "disabled" : string.Empty)">Next</a>
+            <a href="/Home/ListAds?page=@(ViewBag.CurrentPage + 1)@(currentCategoryQuery != null ? "&category=" + currentCategoryQuery : string.Empty)@(currentSearchQuery != null ? "&search=" + currentSearchQuery : string.Empty)@(currentLocationQuery != null ? "&locations=" + currentLocationQuery : string.Empty)" class="btn btn-default @(!Model.Any() || Model.Count < 12 ? "disabled" : string.Empty)">Next</a>
         </div>
     </div>
 </div>
 
-<p>
-
-</p>

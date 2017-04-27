@@ -63,10 +63,10 @@
                                 <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block img-responsive" />
                             </a>
                                 <br/>
-                            @foreach (var item in Model.Photos.Skip(1))
+                            @foreach (var ad in Model.Photos.Skip(1))
                             {
-                                <a href="@item.ImagePath" title="@Model.Title" data-gallery>
-                                    <img src="@item.ThumbPath" alt="@item.ThumbPath" class="img-rounded" style="margin-bottom: 7px;"/>
+                                <a href="@ad.ImagePath" title="@Model.Title" data-gallery>
+                                    <img src="@ad.ThumbPath" alt="@ad.ThumbPath" class="img-rounded" style="margin-bottom: 7px;"/>
                                 </a>
                             }
                         </div>
