@@ -5,30 +5,15 @@
 }
 
 <div class="container">
-    <div class="well">
-        <h2>Delete Article</h2>
+    <div class="well">        
         @using (Html.BeginForm("Delete", "Ad", FormMethod.Post, new { @class = "form-horizontal" }))
         {
-            @Html.AntiForgeryToken()
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.Title, new { @class = "control-label col-sm-4" })
-                <div class="col-sm-4">
-                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @readonly = "readonly" })
-                </div>
+            <div class="form-group" align="center">  
+                    <h2 class="col-sm-6 col-sm-offset-3" align="center">Are you sure you would like to delete @Model.Title ?</h2>                               
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.Description, new { @class = "control-label col-sm-4" })
-                <div class="col-sm-4">
-                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", @readonly = "readonly", @rows = "7" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-4 col-sm-offset-4">
-                     @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default" })
-                    <input type="submit" value="Delete" class="btn btn-danger" />
-                </div>
+            <div class="col-sm-6 col-sm-offset-3" align="center">
+                @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default" })
+                <input type="submit" value="Delete" class="btn btn-danger" />
             </div>
         }
     </div>

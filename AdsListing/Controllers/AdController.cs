@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using AdsListing.Models;
 using System.IO;
-using WebGrease.Css.Extensions;
 
 namespace AdsListing.Controllers
 {
@@ -17,7 +16,7 @@ namespace AdsListing.Controllers
         // GET: Ad
         public ActionResult Index()
         {
-            return RedirectToAction("List");
+            return RedirectToAction("ListAds", "Home", new { area = "" });
         }
         // GET: Ad/List
         public ActionResult List()
@@ -102,7 +101,7 @@ namespace AdsListing.Controllers
                         .First()
                         .Id;
 
-                    var ad = new Ad(authorId, model.Title, model.Description, model.CategoryId, model.LocationId, model.Price);
+                    var ad = new Ad(authorId, model.Title, model.Description, model.CategoryId, model.LocationId, model.Price, model.ContactNumber);
                     //Set Ads Author
                     ad.AuthorId = authorId;
 
@@ -114,34 +113,34 @@ namespace AdsListing.Controllers
                     {
                         var photo = new Photo();
 
-                        //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+                        var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
 
                         foreach (var image in images)
                         {
-                            //if (allowedImageTypes.Contains(image.ContentType))
-                            //{
-                            if (image.ContentLength == 0) continue;
-
-                            var fileName = Guid.NewGuid().ToString();
-                            var extension = "";
-
-                            if (Path.GetExtension(image.FileName) == null)
+                            if (allowedImageTypes.Contains(image.ContentType))
                             {
-                                extension = "add";
-                            }
-                            else
-                            {
-                                extension = Path.GetExtension(image.FileName).ToLower();
-                            }
-                            
-                            using (var img = Image.FromStream(image.InputStream))
-                            {
-                                photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
-                                photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+                                if (image.ContentLength == 0) continue;
 
-                                SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
-                                SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
-                                //}
+                                var fileName = Guid.NewGuid().ToString();
+                                var extension = "";
+
+                                if (Path.GetExtension(image.FileName) == null)
+                                {
+                                    extension = "add";
+                                }
+                                else
+                                {
+                                    extension = Path.GetExtension(image.FileName).ToLower();
+                                }
+
+                                using (var img = Image.FromStream(image.InputStream))
+                                {
+                                    photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
+                                    photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+
+                                    SaveToFolder(img, fileName, extension, new Size(180, 120), photo.ThumbPath);
+                                    SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
+                                }
                                 photo.AdId = ad.Id;
                                 database.Photos.Add(photo);
                                 database.SaveChanges();
@@ -154,7 +153,7 @@ namespace AdsListing.Controllers
                         .Where(p => p.AdId == ad.Id)
                         .ToList();
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id = ad.Id });
                 }
 
 
@@ -283,6 +282,8 @@ namespace AdsListing.Controllers
                         .Locations
                         .OrderBy(l => l.Name)
                         .ToList(),
+                    Status = ad.Status,
+                    ContactNumber = ad.ContactNumber,
                     Photos = photos
                 };
 
@@ -310,7 +311,7 @@ namespace AdsListing.Controllers
                     ad.Price = model.Price;
                     ad.CategoryId = model.CategoryId;
                     ad.LocationId = model.LocationId;
-                    ad.Status = model.Status;                   
+                    ad.Status = model.Status;
 
                     //Set article state in DB
                     database.Entry(ad).State = EntityState.Modified;
@@ -320,28 +321,29 @@ namespace AdsListing.Controllers
                     {
                         var photo = new Photo();
 
-                        //    //var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+                        var allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
 
                         foreach (var image in images)
                         {
-                            //if (allowedImageTypes.Contains(image.ContentType))
-                            //{
-                            if (image.ContentLength == 0) continue;
-
-                            var fileName = Guid.NewGuid().ToString();
-
-                            var extension = Path.GetExtension(image.FileName).ToLower();
-
-                            using (var img = Image.FromStream(image.InputStream))
+                            if (allowedImageTypes.Contains(image.ContentType))
                             {
+                                if (image.ContentLength == 0) continue;
 
-                                photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
-                                photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
+                                var fileName = Guid.NewGuid().ToString();
+
+                                var extension = Path.GetExtension(image.FileName).ToLower();
+
+                                using (var img = Image.FromStream(image.InputStream))
+                                {
+
+                                    photo.ThumbPath = String.Format("/Content/Images/Thumbs/{0}{1}", fileName, extension);
+                                    photo.ImagePath = String.Format("/Content/Images/Original/{0}{1}", fileName, extension);
 
 
-                                SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
-                                SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
-                                //}
+                                    SaveToFolder(img, fileName, extension, new Size(100, 100), photo.ThumbPath);
+                                    SaveToFolder(img, fileName, extension, new Size(600, 600), photo.ImagePath);
+                                }
+
                                 photo.AdId = ad.Id;
                                 database.Photos.Add(photo);
                                 database.SaveChanges();
@@ -359,7 +361,7 @@ namespace AdsListing.Controllers
                         .Where(p => p.AdId == ad.Id)
                         .ToList();
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id = ad.Id });
                 }
 
                 model.Categories = database

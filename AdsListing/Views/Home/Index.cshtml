@@ -8,32 +8,34 @@
 }
 
 <div class="row">
-    <div class="col-sm-3">
-        @Html.Partial("_ViewByCategory", new AdsListingDbContext().Categories.OrderBy(c => c.Name).ToList())
-    </div>
-    <div class="col-sm-9 col-md-2 list-inline">
-        @if (Model.Any())
-        {
-            foreach (var ad in Model.Where(a => a.Status == AdStatus.Approved).OrderByDescending(d => d.DateCreated))
+    <div class="well">
+        <div class="col-sm-3">
+            @Html.Partial("_ViewByCategory", new AdsListingDbContext().Categories.OrderBy(c => c.Name).ToList())
+        </div>
+        <div class="col-sm-9 col-md-2 list-inline">
+            @if (Model.Any())
             {
-                <div class="thumbnail">
-                    @if (ad.Photos.Any())
-                    {
-                        <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath" alt="Missing Image"/></a>
-                    }
-                    else
-                    {
-                        <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" alt="Missing Image" href="/Ad/Details/@ad.Id" /></a>
-                    }
-                    <div class="caption">
-                        <a href="/Ad/Details/@ad.Id">@ad.Title</a>
+                foreach (var ad in Model.Where(a => a.Status == AdStatus.Approved).OrderByDescending(d => d.DateCreated))
+                {
+                    <div class="thumbnail">
+                        @if (ad.Photos.Any())
+                        {
+                            <a href="/Ad/Details/@ad.Id"><img src="@ad.Photos.First().ThumbPath" alt="Missing Image" /></a>
+                        }
+                        else
+                        {
+                            <a href="/Ad/Details/@ad.Id"><img src="/Content/Images/no_image-Thumb.jpg" alt="Missing Image" href="/Ad/Details/@ad.Id" /></a>
+                        }
+                        <div class="caption">
+                            <a href="/Ad/Details/@ad.Id">@ad.Title</a>
 
-                        <p>@ad.Location.Name</p>
-                        <h4>$@ad.Price</h4>
+                            <p>@ad.Location.Name</p>
+                            <h4>$@ad.Price</h4>
+                        </div>
                     </div>
-                </div>
+                }
             }
-        }
+        </div>
     </div>
 </div>
 

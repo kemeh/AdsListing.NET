@@ -32,5 +32,7 @@ namespace AdsListing.Models
         public List<Photo> Photos { get; set; }
 
         public AdStatus Status { get; set; }
+
+        public int ContactNumber { get; set; }
     }
 }

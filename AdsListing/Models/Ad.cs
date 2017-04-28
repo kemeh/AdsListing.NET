@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace AdsListing.Models
             
         }
 
-        public Ad(string authorId, string title, string description, int categoryId, int locationId, double price)
+        public Ad(string authorId, string title, string description, int categoryId, int locationId, double price, int contactNumber)
         {
             this.AuthorId = authorId;
             this.Title = title;
@@ -24,6 +25,7 @@ namespace AdsListing.Models
             this.CategoryId = categoryId;
             this.LocationId = locationId;
             this.Price = price;
+            this.ContactNumber = contactNumber;
             this.photos = new List<Photo>();
             this.Status = AdStatus.WaitingApproval;
             this.DateCreated = DateTime.UtcNow;
@@ -53,6 +55,7 @@ namespace AdsListing.Models
 
         public virtual Location Location { get; set; }
 
+        [Required(ErrorMessage = "Price must contain only digits!")]
         public double Price { get; set; }
 
         public virtual ICollection<Photo> Photos { get; set; }
@@ -60,6 +63,10 @@ namespace AdsListing.Models
         public AdStatus Status { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        [Required(ErrorMessage = "Contact Number must contain only digits!")]
+        [DisplayName("Contact Number")]
+        public int ContactNumber { get; set; }
 
         public bool IsAuthor(string name)
         {

@@ -37,6 +37,13 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(m => m.ContactNumber, new { @class = "control-label col-sm-4" })
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
                 @Html.LabelFor(m => m.Categories, new { @class = "control-label col-sm-4" })
                 <div class="dropdown col-sm-4">
                     @Html.DropDownListFor(m => m.CategoryId,
@@ -74,9 +81,11 @@
             <div class="form-group">
                 @for (int i = 0; i < Model.Photos.Count; i++)
                 {
-                    <div class="col-sm-offset-4 col-sm-4">
-                        <input type="checkbox" name="deleteInputs" value="@Model.Photos[i].Id" />
-                        <img src="@Model.Photos[i].ThumbPath" alt="Alternate Text" />
+                    <div class="col-sm-offset-4 col-sm-4" style="padding: 5px">
+                        Delete <input type="checkbox" name="deleteInputs" value="@Model.Photos[i].Id" />
+                        <img src="@Model.Photos[i].ThumbPath" alt="Alternate Text"/>
+
+
                     </div>
                     <br />
                     <br />

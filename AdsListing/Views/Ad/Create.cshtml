@@ -6,7 +6,7 @@
 <div class="container">
     <div class="well">
         <h2>New Ad Posting</h2>
-        @using (Html.BeginForm("Create", "Ad", FormMethod.Post, new { enctype="multipart/form-data", @class = "form-horizontal" }))
+        @using (Html.BeginForm("Create", "Ad", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary("", new { @class = "text-danger" })
@@ -32,11 +32,18 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(m => m.ContactNumber, new { @class = "control-label col-sm-4" })
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
                 @Html.LabelFor(m => m.CategoryId, new { @class = "col-sm-4 control-label" })
                 <div class="dropdown col-sm-4">
                     @Html.DropDownListFor(m => m.CategoryId,
-                        new SelectList(Model.Categories, "Id", "Name"),
-                        new { @class = "btn btn-info col-sm-12" })
+                    new SelectList(Model.Categories, "Id", "Name"),
+                    new { @class = "btn btn-info col-sm-12" })
                 </div>
             </div>
 
@@ -44,13 +51,13 @@
                 @Html.LabelFor(m => m.LocationId, new { @class = "col-sm-4 control-label" })
                 <div class="dropdown col-sm-4">
                     @Html.DropDownListFor(m => m.LocationId,
-                        new SelectList(Model.Locations, "Id", "Name"),
-                        new { @class = "btn btn-info col-sm-12" })
+                    new SelectList(Model.Locations, "Id", "Name"),
+                    new { @class = "btn btn-info col-sm-12" })
                 </div>
             </div>
 
             <div class="form-group">
-                @Html.Label("images","Images", new {  @class = "control-label col-sm-4" })
+                @Html.Label("images", "Images", new { @class = "control-label col-sm-4" })
                 <div class="col-sm-4">
                     @Html.TextBox("Images", null, new { multiple = "multiple", type = "file", @class = "form-control" })
                 </div>

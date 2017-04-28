@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -69,6 +68,7 @@ namespace AdsListing.Controllers
                 UserAds = database
                 .Ads
                 .Where(a => a.AuthorId.Equals(userId))
+                .OrderByDescending(a => a.DateCreated)
                 .ToList(),
                 Email = database
                 .Users

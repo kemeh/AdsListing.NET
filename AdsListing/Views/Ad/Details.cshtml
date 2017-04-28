@@ -3,105 +3,120 @@
 @{
     ViewBag.Title = "Details";
 }
+<div class="well">
+    @Html.ActionLink("Back", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default btn-xs" })
+    @if (User.IsInRole("Admin") || Model.IsAuthor(User.Identity.Name))
+    {
+        @Html.ActionLink("Edit", "Edit", "Ad", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
+        @Html.ActionLink("Delete", "Delete", "Ad", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })
+    }
 
-@Html.ActionLink("Back", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-default btn-xs" })
-@if (User.IsInRole("Admin") || Model.IsAuthor(User.Identity.Name))
-{
-    @Html.ActionLink("Edit", "Edit", "Ad", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
-    @Html.ActionLink("Delete", "Delete", "Ad", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })
-}
+    <br />
+    <br />
+    <div class="row">
 
-<br />
-<br />
-<div class="row">
-    
-    <div class="col-sm-8">
-        <article>
-            <header>
-                
-                @if (Model.Photos.Any())
-                {
-                    
+
+        <div class="col-sm-8">
+            <article>
+                <header>
+
+                    @if (Model.Photos.Any())
+                    {
+
                     <!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
-                    <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
-                        <!-- The container for the modal slides -->
-                        <div class="slides"></div>
-                        <!-- Controls for the borderless lightbox -->
-                        <h3 class="title"></h3>
-                        <a class="prev">‹</a>
-                        <a class="next">›</a>
-                        <a class="close">×</a>
-                        <a class="play-pause"></a>
-                        <ol class="indicator"></ol>
-                        <!-- The modal dialog, which will be used to wrap the lightbox content -->
-                        <div class="modal fade">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title"></h4>
-                                    </div>
-                                    <div class="modal-body next" style="max-height: 500px; min-height: 400px;"></div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default pull-left prev">
-                                            <i class="glyphicon glyphicon-chevron-left"></i>
-                                            Previous
-                                        </button>
-                                        <button type="button" class="btn btn-primary next">
-                                            Next
-                                            <i class="glyphicon glyphicon-chevron-right"></i>
-                                        </button>
+                        <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
+                            <!-- The container for the modal slides -->
+                            <div class="slides"></div>
+                            <!-- Controls for the borderless lightbox -->
+                            <h3 class="title"></h3>
+                            <a class="prev">‹</a>
+                            <a class="next">›</a>
+                            <a class="close">×</a>
+                            <a class="play-pause"></a>
+                            <ol class="indicator"></ol>
+                            <!-- The modal dialog, which will be used to wrap the lightbox content -->
+                            <div class="modal fade">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title"></h4>
+                                        </div>
+                                        <div class="modal-body next" style="max-height: 500px; min-height: 400px;"></div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default pull-left prev">
+                                                <i class="glyphicon glyphicon-chevron-left"></i>
+                                                Previous
+                                            </button>
+                                            <button type="button" class="btn btn-primary next">
+                                                Next
+                                                <i class="glyphicon glyphicon-chevron-right"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div style="margin-top: 17px;">
-                        <div id="links">
-                            <a href="@Model.Photos.First().ImagePath" data-gallery>
-                                <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block img-responsive" />
-                            </a>
-                                <br/>
-                            @foreach (var ad in Model.Photos.Skip(1))
-                            {
-                                <a href="@ad.ImagePath" title="@Model.Title" data-gallery>
-                                    <img src="@ad.ThumbPath" alt="@ad.ThumbPath" class="img-rounded" style="margin-bottom: 7px;"/>
+                        <div style="margin-top: 17px;">
+                            <div id="links">
+                                <a href="@Model.Photos.First().ImagePath" data-gallery>
+                                    <img src="@Model.Photos.First().ImagePath" alt="/Content/Images/no-image-featured-image.png" class="center-block img-responsive" />
                                 </a>
-                            }
+                                <br />
+                                @foreach (var ad in Model.Photos.Skip(1))
+                                {
+                                    <a href="@ad.ImagePath" title="@Model.Title" data-gallery>
+                                        <img src="@ad.ThumbPath" alt="@ad.ThumbPath" class="img-rounded" style="margin-bottom: 7px;" />
+                                    </a>
+                                }
+                            </div>
                         </div>
-                    </div>
-                }
-                else
-                {
-                    <img src="/Content/Images/no-image-featured-image.png" alt="Something is wrong with the image" class="center-block" />
-                }
+                    }
+                    else
+                    {
+                        <img src="/Content/Images/no-image-featured-image.png" alt="Something is wrong with the image" class="center-block" />
+                    }
 
 
-            </header>
-            <small class="author">
-                
-            </small>
-            <footer class="pull-right">
+                </header>
+                <small class="author">
 
-            </footer>
-        </article>
+                </small>
+                <footer class="pull-right"></footer>
+            </article>
+        </div>
+        <div class="col-sm-4">
+            <h3>
+                $<span class="badge" style="font-size: 25px">@Model.Price</span>
+            </h3>
+            <h2>
+                @Model.Title
+            </h2>
+            <hr />
+            <p>
+                @Model.Description
+            </p>
+            
+            <div>
+                Contact Number: <strong>@Model.ContactNumber</strong>
+            </div>
+            <div>
+                Contact E-mail: <strong>@Model.Author.Email</strong>
+            </div>
+            <div>
+                Posted by: <strong>@Model.Author.FullName</strong>
+            </div>
+            <div>
+                Created on: <strong>@Model.DateCreated</strong>
+            </div>
+            <div>
+                Category: <strong>@Model.Category.Name</strong>
+            </div>
+            <div>
+                Location: <strong>@Model.Location.Name</strong>
+            </div>
+        </div>
+
     </div>
-    <div class="col-sm-4">
-        <h3>$<span class="badge" style="font-size: 25px">@Model.Price</span>
-        </h3>
-        <h2>
-            @Model.Title
-        </h2>
-        <p>
-            @Model.Description
-        </p>
-        <div>Posted by: <strong>@Model.Author.FullName</strong></div>
-        <div>Created on: <strong>@Model.DateCreated</strong></div>
-        <div>Category: <strong>@Model.Category.Name</strong></div>
-        <div>Location: <strong>@Model.Location.Name</strong></div>
-    </div>
-
 </div>
-<hr />
-

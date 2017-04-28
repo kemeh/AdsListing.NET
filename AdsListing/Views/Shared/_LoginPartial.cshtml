@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNet.Identity
+﻿@using AdsListing.Models
+@using Microsoft.AspNet.Identity
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -6,10 +7,41 @@
     @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav navbar-right">
+            @{
+                var database = new AdsListingDbContext();
+
+                var categories = database.Categories.ToList();
+                var locations = database.Locations.ToList();
+            }
             
-            <li>
-                @Html.ActionLink("Post NEW Ad", "Create", "Ad", null, new { @class = "btn btn-warning"})
-            </li>
+            @if (categories.Count == 0)
+            {
+                if (@User.IsInRole("Admin"))
+                {
+                    <li>
+                        @Html.ActionLink("Create a category", "Create", "Category", null, new { @class = "btn btn-danger" })
+                    </li>   
+                }
+
+            }
+            else if (locations.Count == 0)
+            {
+                if (User.IsInRole("Admin"))
+                 {
+                     <li>
+                         @Html.ActionLink("Create a Location", "Create", "Location", null, new { @class = "btn btn-danger" })
+                     </li>
+                     
+                }
+
+            }
+            else
+            {
+                <li>
+                    @Html.ActionLink("Post NEW Ad", "Create", "Ad", null, new { @class = "btn btn-warning" })
+                </li>
+            }
+           
             
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
@@ -42,7 +74,7 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new {id = "registerLink"})</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new {id = "loginLink"})</li>
     </ul>   
 }
